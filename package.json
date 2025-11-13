@@ -11,18 +11,26 @@
     "url": "git+https://github.com/liviaborges27/backend-biblioteca.git"
   },
   "keywords": [],
-  "author": "Lívia Borgges Matos",
+  "author": "Lívia Borges Matos",
   "license": "ISC",
+   "type": "module",
   "bugs": {
     "url": "https://github.com/liviaborges27/backend-biblioteca/issues"
   },
   "homepage": "https://github.com/liviaborges27/backend-biblioteca#readme",
   "dependencies": {
-    "express": "^5.1.0"
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "install": "^0.13.0",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.3",
     "@types/node": "^24.8.0",
+    "@types/pg": "^8.15.6",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
