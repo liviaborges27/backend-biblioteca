@@ -1,13 +1,13 @@
-import type { Request, Response } from "express"; 
-import { Router } from "express"; 
+import type { Request, Response } from "express";
+import { Router } from "express";
 import LivroController from "./controller/LivroController.js";
 import AlunoController from "./controller/AlunoController.js";
 import EmprestimoController from "./controller/EmprestimoController.js";
 
 const router = Router();
 
-router.get("/api" , (req: Request, res: Response) => {
-    res.status(200).json({mensagem: "Olá, seja bem vindo"});
+router.get("/api", (req: Request, res: Response) => {
+    res.status(200).json({ mensagem: "Olá, seja bem vindo" });
 });
 
 /**
@@ -32,4 +32,6 @@ router.post("/api/livro", LivroController.novo);
 // Retorna a lista com todos os emprestimos cadastrados
 router.get("/api/emprestimo", EmprestimoController.todos);
 
-export {router};
+router.post("/api/emprestimo", EmprestimoController.cadastrar);
+
+export { router };

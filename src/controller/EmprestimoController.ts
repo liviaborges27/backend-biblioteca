@@ -35,6 +35,31 @@ class EmprestimoController extends Emprestimo {
             return res.status(500).json({ mensagem: "Não foi possível acessar a lista de empréstimos." });
         }
     }
+    /**
+     * Cadastra um novo empréstimo.
+     */
+    static async cadastrar(req: Request, res: Response): Promise<Response> {
+        try {
+            const dadosRecebidos: EmprestimoDTO = req.body;
+
+
+            if (!dadosRecebidos.idAluno || !dadosRecebidos.idLivro || !dadosRecebidos.dataEmprestimo || !dadosRecebidos.dataDevolucao || !dadosRecebidos.statusEmprestimo) {
+                return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios.' });
+            }
+
+
+            const novoIdEmprestimo = await Emprestimo.cadastrarEmprestimo(
+                dadosRecebidos.idAluno, dadosRecebidos.idLivro, new Date(dadosRecebidos.dataEmprestimo), new Date(dadosRecebidos.dataDevolucao), dadosRecebidos.statusEmprestimo
+            );
+
+
+            return res.status(201).json({ mensagem: 'Empréstimo cadastrado com sucesso.', idEmprestimo: novoIdEmprestimo });
+
+        } catch (error) {
+            console.error('Erro ao cadastrar empréstimo:', error);
+            return res.status(500).json({ mensagem: 'Erro ao cadastrar o empréstimo.' });
+        }
+    }
 
 }
 

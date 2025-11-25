@@ -1,9 +1,9 @@
-import type { LivroDTO } from "../interface/LivroDTO.js"; 
-import { DatabaseModel } from "./DataBaseModel.js"; 
+import type { LivroDTO } from "../interface/LivroDTO.js";
+import { DatabaseModel } from "./DataBaseModel.js";
 const database = new DatabaseModel().pool;
 class Livro {
     // Atributos
-    private idLivro: number;
+    private idLivro: number = 0;
     private titulo: string;
     private autor: string;
     private editora: string;
@@ -16,7 +16,6 @@ class Livro {
 
     // Construtor
     constructor(
-        _idLivro: number,
         _titulo: string,
         _autor: string,
         _editora: string,
@@ -27,7 +26,6 @@ class Livro {
         _valorAquisicao: number,
         _statusLivroEmprestado: string
     ) {
-        this.idLivro = _idLivro;
         this.titulo = _titulo;
         this.autor = _autor;
         this.editora = _editora;
@@ -109,18 +107,18 @@ class Livro {
     public setStatusLivroEmprestado(_statusLivroEmprestado: string): void {
         this.statusLivroEmprestado = _statusLivroEmprestado;
     }
-     /**
-     * Retorna os livroscadastrados no banco de dados
-     * @returns Lista com carros cadastrados
-     * @returns valor nulo em caso de erro na consulta
-     */
+    /**
+    * Retorna os livroscadastrados no banco de dados
+    * @returns Lista com carros cadastrados
+    * @returns valor nulo em caso de erro na consulta
+    */
     static async listarLivro(): Promise<Array<Livro> | null> {
         try {
             // Inicializa uma lista vazia que irá armazenar os objetos do tipo LivroDTO
             let listaDeLivro: Array<Livro> = [];
 
             // Define a query SQL que será executada no banco de dados para buscar todos os registros da tabela 'livro'
-            const querySelectLivro = `SELECT * FROM livro WHERE situacao=TRUE;`;
+            const querySelectLivro = `SELECT * FROM livro;`;
 
             // Executa a query no banco de dados e aguarda a resposta
             const respostaBD = await database.query(querySelectLivro);
@@ -128,18 +126,17 @@ class Livro {
             // Itera sobre cada linha retornada pela consulta
             respostaBD.rows.forEach((livroBD) => {
                 // Cria um novo objeto CarroDTO com os dados da linha atual
-                const novoLivro: Livro  = new Livro(
-                    livroBD.idLivro,
-                    livroBD.titulo,    
-                    livroBD.autor, 
-                    livroBD.editora,   
-                    livroBD.anoPublicacao, 
-                    livroBD.isbn, 
-                    livroBD.quantTotal, 
+                const novoLivro: Livro = new Livro(
+                    livroBD.titulo,
+                    livroBD.autor,
+                    livroBD.editora,
+                    livroBD.anoPublicacao,
+                    livroBD.isbn,
+                    livroBD.quantTotal,
                     livroBD.quantDisponivel,
                     livroBD.valorAquisicao,
                     livroBD.statusLivroEmprestado
-                        
+
                 )
 
                 novoLivro.setIdLivro(livroBD.id_livro);
@@ -157,18 +154,18 @@ class Livro {
             return null;
         }
     }
-     /**
-     * Insere um livrono banco de dados
-     * 
-     * @param livro objeto a ser inserido no banco
-     * @returns **true** caso a inserção tenha sido feita, **false** em caso de erro
-     */
+    /**
+    * Insere um livro no banco de dados
+    * 
+    * @param livro objeto a ser inserido no banco
+    * @returns **true** caso a inserção tenha sido feita, **false** em caso de erro
+    */
     static async cadastrarLivro(livro: LivroDTO): Promise<boolean> {
         try {
             // Define a query SQL para inserir um novo livro a tabela 'livro'
             // Os valores serão passados como parâmetros ($1, $2, $3, $4..)
             // O comando RETURNING retorna o id_livro gerado automaticamente pelo banco
-            const queryInsertLivro = `INSERT INTO livro (titulo, autor, editora , anoPublicacao, isbn, quantTotal, quantDisponivel, valorAquisicao, statusLivroEmprestado)
+            const queryInsertLivro = `INSERT INTO livro (titulo, autor, editora , ano_publicacao, isbn, quant_total, quant_disponivel, valor_aquisicao, status_livro_emprestado)
                                 VALUES
                                 ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                                 RETURNING id_livro;`;
@@ -176,16 +173,16 @@ class Livro {
             // Executa a query no banco de dados, passando os valores do carro como parâmetros
             // Usa toUpperCase() para padronizar os textos e parseInt() para garantir que o ano seja um número
             const respostaBD = await database.query(queryInsertLivro, [
-                livro.titulo.toUpperCase(), 
-                livro.autor.toUpperCase(), 
-                livro.editora.toUpperCase(), 
+                livro.titulo.toUpperCase(),
+                livro.autor.toUpperCase(),
+                livro.editora.toUpperCase(),
                 livro.anoPublicacao,
                 livro.isbn,
                 livro.quantDisponivel,
                 livro.quantTotal,
                 livro.valorAquisicao,
                 livro.statusLivroEmprestado
-                
+
             ]);
 
             // Verifica se a resposta do banco contém pelo menos uma linha (ou seja, se o carro foi inserido)

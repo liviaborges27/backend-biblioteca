@@ -3,86 +3,84 @@ import { DatabaseModel } from "./DataBaseModel.js"; // Importa a classe Database
 
 const database = new DatabaseModel().pool; //Inicializa o pool de conexões com o banco de dados
 
-class Aluno{
+class Aluno {
     //atributos
-     private idAluno: number = 0;
+    private idAluno: number = 0;
     private ra: string;
     private nome: string;
     private sobrenome: string;
-    private data_nascimento: Date;
+    private dataNascimento: Date;
     private endereco: string;
     private email: string;
     private celular: string;
 
     constructor(
-        _idAluno: number,
         _ra: string,
         _nome: string,
         _sobrenome: string,
-        _data_nascimento: Date,
+        _dataNascimento: Date,
         _endereco: string,
         _email: string,
         _celular: string
-    ){
-        this.idAluno = _idAluno,
+    ) {
         this.ra = _ra;
         this.nome = _nome;
         this.sobrenome = _sobrenome;
-        this.data_nascimento = _data_nascimento;
+        this.dataNascimento = _dataNascimento;
         this.endereco = _endereco;
-        this.email= _email;
-        this.celular= _celular;
+        this.email = _email;
+        this.celular = _celular;
 
     }
     //Metodo GET e SET (encapsulamento)
-     public getIdAluno(): number{
+    public getIdAluno(): number {
         return this.idAluno
     }
 
-    public setIdAluno(_idAluno: number): void{
+    public setIdAluno(_idAluno: number): void {
         this.idAluno = _idAluno;
     }
-    public getRa(): string{
+    public getRa(): string {
         return this.ra
     }
 
-    public setRa(_ra: string): void{
+    public setRa(_ra: string): void {
         this.ra = _ra;
     }
-    public getNome(): string{
+    public getNome(): string {
         return this.nome;
     }
-    public setNome(_nome: string): void{
+    public setNome(_nome: string): void {
         this.nome = _nome;
     }
-    public getSobrenome(): string{
+    public getSobrenome(): string {
         return this.sobrenome;
     }
-    public setSobrenome(_sobrenome: string): void{
+    public setSobrenome(_sobrenome: string): void {
         this.sobrenome = _sobrenome;
     }
-     public getDataNascimento(): Date{
-        return this.data_nascimento;
+    public getDataNascimento(): Date {
+        return this.dataNascimento;
     }
-    public setDataNasciemnto(_data_nasciemento: Date): void{
-        this.data_nascimento = _data_nasciemento;
+    public setDataNasciemnto(_dataNasciemento: Date): void {
+        this.dataNascimento = _dataNasciemento;
     }
-     public getEndereco(): string{
+    public getEndereco(): string {
         return this.endereco;
     }
-    public setEndereco(_endereco: string): void{
+    public setEndereco(_endereco: string): void {
         this.endereco = _endereco;
     }
-      public getEmail(): string{
+    public getEmail(): string {
         return this.email;
     }
-    public setEmail(_email: string): void{
+    public setEmail(_email: string): void {
         this.email = _email;
     }
-     public getCelular(): string{
+    public getCelular(): string {
         return this.celular;
     }
-    public setCelular(_celular: string): void{
+    public setCelular(_celular: string): void {
         this.celular = _celular;
     }
     /**
@@ -105,12 +103,12 @@ class Aluno{
             // Usa toUpperCase() para padronizar o nome em letras maiúsculas
             const respostaBD = await database.query(queryInsertAluno, [
                 aluno.nome.toUpperCase(),
-                aluno.ra, 
-                aluno.sobrenome, 
-                aluno.data_nascimento,
-                aluno.endereco,  
-                aluno.email, 
-                aluno.celular         
+                aluno.ra,
+                aluno.sobrenome.toUpperCase(),
+                aluno.dataNascimento,
+                aluno.endereco.toUpperCase(),
+                aluno.email.toUpperCase(),
+                aluno.celular
             ]);
 
             // Verifica se a resposta do banco contém pelo menos uma linha
@@ -139,7 +137,7 @@ class Aluno{
      * @returns Lista com alunos cadastrados
      * @returns valor nulo em caso de erro na consulta
      */
-     static async listarAluno(): Promise<Array<Aluno> | null> {
+    static async listarAluno(): Promise<Array<Aluno> | null> {
         try {
             // Cria uma lista vazia que irá armazenar os objetos do tipo Aluno
             let listaDeAluno: Array<Aluno> = [];
@@ -154,11 +152,10 @@ class Aluno{
             respostaBD.rows.forEach((alunoBD) => {
                 // Cria um novo objeto aluno usando os dados da linha atual (nome, cpf, telefone)
                 const novoAluno: Aluno = new Aluno(
-                    alunoBD.id_aluno,
                     alunoBD.ra,
                     alunoBD.nome,
                     alunoBD.sobrenome,
-                    alunoBD.data_nascimento,
+                    alunoBD.dataNascimento,
                     alunoBD.endereco,
                     alunoBD.email,
                     alunoBD.celular

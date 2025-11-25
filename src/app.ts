@@ -4,7 +4,7 @@ import { DatabaseModel } from "./model/DataBaseModel.js";
 const port: number = 333;
 
 new DatabaseModel().testeConexao().then((resbd) => {
-    if(resbd) {
+    if (resbd) {
         server.listen(port, () => {
             console.log(`Servidor rodando em http://localhost:${port}`);
         })

@@ -38,7 +38,7 @@ class LivroController extends Livro {
      * @returns 
      * @returns 
      */
-    
+
     static async novo(req: Request, res: Response): Promise<Response> {
         try {
             // Extrai os dados enviados pelo aluno na requisição HTTP (normalmente via POST)
@@ -69,7 +69,7 @@ class LivroController extends Livro {
             // Envia uma mensagem informando que não foi possível inserir o novo livro
             return res.status(500).json({ mensagem: "Não foi possível inserir o livro" });
         }
-            
-}
+
+    }
 }
 export default LivroController;

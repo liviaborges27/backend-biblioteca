@@ -1,10 +1,10 @@
-import type { EmprestimoDTO } from "../interface/EmprestimoDTO.js"; 
+import type { EmprestimoDTO } from "../interface/EmprestimoDTO.js";
 import { DatabaseModel } from "./DataBaseModel.js"; // Importa a classe DatabaseModel para realizar a conexão com o banco de dados
 
 const database = new DatabaseModel().pool;  //Inicializa o pool de conexões com o banco de dados
 class Emprestimo {
     //atributos
-    private idEmprestimo: number;
+    private idEmprestimo: number = 0;
     private idAluno: number;
     private idLivro: number;
     private dataEmprestimo: Date;
@@ -13,14 +13,12 @@ class Emprestimo {
 
 
     constructor(
-        _idEmprestimo: number,
         _idAluno: number,
         _idLivro: number,
         _dataEmprestimo: Date,
         _dataDevolucao: Date,
         _statusEmprestimo: string
     ) {
-        this.idEmprestimo = _idEmprestimo;
         this.idAluno = _idAluno;
         this.idLivro = _idLivro;
         this.dataEmprestimo = _dataEmprestimo;
@@ -81,7 +79,7 @@ class Emprestimo {
             // Inicializa uma lista vazia que irá armazenar os objetos do tipo EmprestimoDTO
             let listaDeEmprestimo: Array<EmprestimoDTO> = [];
 
-           
+
             const querySelectEmprestimo = `SELECT * FROM emprestimo;`;
 
             // Executa a query no banco de dados e aguarda a resposta
@@ -90,8 +88,7 @@ class Emprestimo {
             // Percorre cada linha retornada pela consulta
             respostaBD.rows.forEach((emprestimoBD) => {
                 const novoEmprestimo: Emprestimo = new Emprestimo(
-                    emprestimoBD.idEmprestimo,
-                    emprestimoBD.id_aluno,
+                    emprestimoBD.idAluno,
                     emprestimoBD.idLivro,
                     emprestimoBD.dataEmprestimo,
                     emprestimoBD.dataDevolucao,
@@ -110,6 +107,54 @@ class Emprestimo {
 
             // Retorna null indicando que houve uma falha na operação
             return null;
+        }
+    }
+    /**
+    * Cadastra um novo empréstimo 
+    * 
+    * @param idAluno : number
+    * @param idLivro : number
+    * @param dataEmprestimo : Date
+    * @param dataDevolucao : Date
+    * @param statusEmprestimo : string
+    * @returns 
+    */
+    static async cadastrarEmprestimo(
+        idAluno: number,
+        idLivro: number,
+        dataEmprestimo: Date,
+        dataDevolucao: Date,
+        statusEmprestimo: string
+    ): Promise<boolean> {
+        try {
+            // Cria a consulta (query) para inserir um empréstimo na tabela retornando o ID do empréstimo criado
+            const queryInsertEmprestimo = `
+                INSERT INTO Emprestimo (id_aluno, id_livro, data_emprestimo, data_devolucao, status_emprestimo)
+                VALUES ($1, $2, $3, $4, $5) RETURNING id_emprestimo;
+            `;
+
+            // estrutura os valores recebidos pela função em uma lista (array)
+            const valores = [idAluno, idLivro, dataEmprestimo, dataDevolucao, statusEmprestimo];
+            // realizada a consulta no banco de dados e armazena o resultado
+            const resultado = await database.query(queryInsertEmprestimo, valores);
+
+            // verifica se a quantidade de linhas alteradas é diferente de 0
+            if (resultado.rowCount != 0) {
+                // exibe mensagem de sucesso no console
+                console.log(`Empréstimo cadastrado com sucesso! ID: ${resultado.rows[0].id_emprestimo}`);
+                // retorna o ID do empréstimo
+                return resultado.rows[0].id_emprestimo;
+            }
+
+            // retorna falso
+            return false;
+
+            // captura qualquer tipo de erro que possa acontecer
+        } catch (error) {
+            // exibe o detalhe do erro no console
+            console.error(`Erro ao cadastrar empréstimo: ${error}`);
+            // lança um novo erro
+            throw new Error('Erro ao cadastrar o empréstimo.');
         }
     }
 }
